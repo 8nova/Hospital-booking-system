@@ -8,7 +8,6 @@ const Alerts = ({ queueData = [] }) => {
     completion: true
   });
   const [smsTemplate, setSmsTemplate] = useState('registration');
-  const [smsMessage, setSmsMessage] = useState('');
   const [smsLog, setSmsLog] = useState([
     {
       id: 1,
@@ -37,21 +36,8 @@ const Alerts = ({ queueData = [] }) => {
     }));
   };
 
-  const loadTemplate = (templateType) => {
-    const templates = {
-      'registration': 'Registration successful! Your token is {token}. You are {position} in line for {department}.',
-      'waiting': 'Estimated wait time: {time}. Your current position: {position} in queue.',
-      'calling': 'NOW CALLING: {token}. Please proceed to {counter} immediately.',
-      'completed': 'Appointment completed! Thank you for visiting our hospital. Follow-up in 2 weeks if needed.',
-      'delay': '⚠️ Queue delay alert: Your wait time has increased by 10 minutes due to high volume.',
-      'emergency': '🚨 EMERGENCY PROTOCOL ACTIVATED. All emergency cases are being prioritized.'
-    };
-    setSmsMessage(templates[templateType] || '');
-  };
-
   const handleTemplateClick = (templateType) => {
     setSmsTemplate(templateType);
-    loadTemplate(templateType);
   };
 
   const handleSendSMS = (e) => {

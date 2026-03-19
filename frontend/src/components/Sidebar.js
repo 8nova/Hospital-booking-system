@@ -22,9 +22,8 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
 
       <div className="nav-menu">
         {navItems.map(item => (
-          <a
+          <button
             key={item.id}
-            href="#"
             className={`nav-item ${activeSection === item.id ? 'active' : ''}`}
             data-section={item.id}
             onClick={(e) => {
@@ -34,7 +33,7 @@ const Sidebar = ({ activeSection, setActiveSection }) => {
           >
             <i className={item.icon}></i>
             <span className="nav-text">{item.text}</span>
-          </a>
+          </button>
         ))}
       </div>
 
