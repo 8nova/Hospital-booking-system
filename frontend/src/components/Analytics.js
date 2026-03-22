@@ -3,6 +3,49 @@ import React, { useState, useEffect } from 'react';
 const Analytics = () => {
   const [dateRange, setDateRange] = useState('month');
   const [chartsInitialized, setChartsInitialized] = useState(false);
+  const [startDate, setStartDate] = useState('2024-12-01');
+  const [endDate, setEndDate] = useState('2024-12-31');
+
+  const handleApplyDateFilter = () => {
+    showNotification(`Applying date filter: ${startDate} to ${endDate}`, 'success');
+    // You can add logic to refresh charts with new date range
+  };
+
+  const showNotification = (message, type = 'info') => {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background-color: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'error' ? '#ef4444' : '#3b82f6'};
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease-out;
+    `;
+    
+    notification.innerHTML = `
+      <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+      <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease-out';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  };
 
   // Analytics data
   const analyticsData = [
@@ -171,10 +214,20 @@ const Analytics = () => {
             <option value="quarter">This Quarter</option>
             <option value="year">This Year</option>
           </select>
-          <input type="date" className="form-control" defaultValue="2024-12-01" />
+          <input 
+            type="date" 
+            className="form-control" 
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
           <span>to</span>
-          <input type="date" className="form-control" defaultValue="2024-12-31" />
-          <button className="btn btn-primary">Apply</button>
+          <input 
+            type="date" 
+            className="form-control" 
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          <button className="btn btn-primary" onClick={handleApplyDateFilter}>Apply</button>
         </div>
       </div>
 

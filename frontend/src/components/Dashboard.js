@@ -106,8 +106,82 @@ const Dashboard = ({
   };
 
   const handlePauseQueue = () => {
-    setIsQueuePaused(!isQueuePaused);
-    showNotification(isQueuePaused ? "Queue resumed" : "Queue paused", isQueuePaused ? 'success' : 'warning');
+    const newPausedState = !isQueuePaused;
+    setIsQueuePaused(newPausedState);
+    
+    if (newPausedState) {
+      showNotification("⏸️ Queue is now PAUSED - No new patients will be called", 'warning');
+    } else {
+      showNotification("▶️ Queue is now ACTIVE - Patients can be called", 'success');
+    }
+  };
+
+  const handleAlertsClick = () => {
+    showNotification('Viewing system alerts', 'info');
+  };
+
+  const handleEmergencyClick = () => {
+    // Show emergency modal
+    const emergencyModal = document.createElement('div');
+    emergencyModal.className = 'modal';
+    emergencyModal.style.display = 'flex';
+    emergencyModal.innerHTML = `
+      <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header" style="background-color: #fee2e2; border-radius: 8px 8px 0 0; padding: 20px;">
+          <h3 style="color: #991b1b; display: flex; align-items: center; gap: 10px;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+            EMERGENCY MODE ACTIVATED
+          </h3>
+          <button class="close-modal" onclick="this.closest('.modal').remove()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #991b1b;">&times;</button>
+        </div>
+        <div style="padding: 25px;">
+          <div style="background-color: #fef3c7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f59e0b;">
+            <p style="margin: 0; color: #92400e; font-weight: 600;">
+              <i class="fas fa-info-circle"></i> Emergency Protocol Initiated
+            </p>
+          </div>
+          
+          <h4 style="margin-bottom: 15px; color: #1f2937;">Emergency Actions:</h4>
+          <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+            <li style="padding: 10px; background-color: #f9fafb; margin-bottom: 8px; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-check-circle" style="color: #10b981;"></i>
+              <span>All emergency patients moved to priority queue</span>
+            </li>
+            <li style="padding: 10px; background-color: #f9fafb; margin-bottom: 8px; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-check-circle" style="color: #10b981;"></i>
+              <span>Emergency doctors notified</span>
+            </li>
+            <li style="padding: 10px; background-color: #f9fafb; margin-bottom: 8px; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-check-circle" style="color: #10b981;"></i>
+              <span>Emergency room prepared</span>
+            </li>
+            <li style="padding: 10px; background-color: #f9fafb; margin-bottom: 8px; border-radius: 6px; display: flex; align-items: center; gap: 10px;">
+              <i class="fas fa-check-circle" style="color: #10b981;"></i>
+              <span>SMS alerts sent to emergency staff</span>
+            </li>
+          </ul>
+          
+          <div style="background-color: #fee2e2; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #991b1b; font-weight: 600;">
+              <i class="fas fa-phone-alt"></i> Emergency Contact: +233 30 266 6500
+            </p>
+          </div>
+          
+          <button class="btn btn-danger" onclick="this.closest('.modal').remove()" style="width: 100%; padding: 12px; font-size: 16px;">
+            <i class="fas fa-times-circle"></i> Close Emergency Panel
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(emergencyModal);
+    showNotification('🚨 EMERGENCY MODE ACTIVATED!', 'error');
+  };
+
+  const handleViewDetails = (patientId) => {
+    const patient = queueData.find(p => p.id === patientId);
+    if (patient) {
+      showNotification(`Viewing details for ${patient.name}`, 'info');
+    }
   };
 
   const showNotification = (message, type = 'info') => {
@@ -267,7 +341,7 @@ const Dashboard = ({
                         Done
                       </button>
                     )}
-                    <button className="btn btn-small btn-outline">Details</button>
+                    <button className="btn btn-small btn-outline" onClick={() => handleViewDetails(item.id)}>Details</button>
                   </div>
                 </div>
               ))
@@ -312,21 +386,69 @@ const Dashboard = ({
             </div>
 
             <div className="actions-grid">
-              <button className="action-btn-large" onClick={() => setShowAddPatientModal(true)}>
-                <i className="fas fa-user-plus"></i>
-                <span>Add Patient</span>
+              <button 
+                type="button"
+                className="action-btn-large" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Add Patient clicked - Opening modal');
+                  setShowAddPatientModal(true);
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                style={{ 
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  touchAction: 'manipulation'
+                }}
+              >
+                <i className="fas fa-user-plus" style={{ pointerEvents: 'none' }}></i>
+                <span style={{ pointerEvents: 'none' }}>➕ Add Patient</span>
               </button>
-              <button className="action-btn-large" onClick={handlePauseQueue}>
-                <i className={`fas fa-${isQueuePaused ? 'play-circle' : 'pause-circle'}`}></i>
-                <span>{isQueuePaused ? 'Resume' : 'Pause'}</span>
+              <button 
+                type="button"
+                className="action-btn-large" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log('Pause Queue clicked');
+                  handlePauseQueue();
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+                style={{ 
+                  cursor: 'pointer',
+                  pointerEvents: 'auto',
+                  touchAction: 'manipulation',
+                  backgroundColor: isQueuePaused ? '#fef3c7' : '#f9fafb',
+                  border: isQueuePaused ? '2px solid #f59e0b' : 'none'
+                }}
+              >
+                <i className={`fas fa-${isQueuePaused ? 'play-circle' : 'pause-circle'}`} style={{ pointerEvents: 'none', color: isQueuePaused ? '#f59e0b' : 'inherit' }}></i>
+                <span style={{ pointerEvents: 'none', color: isQueuePaused ? '#92400e' : 'inherit', fontWeight: isQueuePaused ? '700' : '600' }}>
+                  {isQueuePaused ? '▶️ Resume Queue' : '⏸️ Pause Queue'}
+                </span>
               </button>
-              <button className="action-btn-large">
-                <i className="fas fa-bell"></i>
-                <span>Alerts</span>
+              <button 
+                type="button" 
+                className="action-btn-large"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAlertsClick();
+                }}
+                style={{ cursor: 'pointer' }}
+              >
+                <i className="fas fa-bell" style={{ pointerEvents: 'none' }}></i>
+                <span style={{ pointerEvents: 'none' }}>Alerts</span>
               </button>
-              <button className="action-btn-large">
-                <i className="fas fa-exclamation-triangle"></i>
-                <span>Emergency</span>
+              <button 
+                type="button" 
+                className="action-btn-large"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEmergencyClick();
+                }}
+                style={{ cursor: 'pointer', backgroundColor: '#fee2e2', border: '2px solid #ef4444' }}
+              >
+                <i className="fas fa-exclamation-triangle" style={{ pointerEvents: 'none', color: '#dc2626' }}></i>
+                <span style={{ pointerEvents: 'none', color: '#991b1b', fontWeight: '700' }}>🚨 Emergency</span>
               </button>
             </div>
           </div>

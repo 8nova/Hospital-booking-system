@@ -81,6 +81,14 @@ const Alerts = ({ queueData = [] }) => {
     }
   };
 
+  const handleBuyMoreCredits = () => {
+    showNotification('Redirecting to SMS credits purchase page...', 'info');
+    // You can add payment integration or modal here
+    setTimeout(() => {
+      showNotification('Purchase feature coming soon!', 'info');
+    }, 1500);
+  };
+
   const showNotification = (message, type = 'info') => {
     const notification = document.createElement('div');
     notification.className = 'notification';
@@ -270,7 +278,7 @@ const Alerts = ({ queueData = [] }) => {
               <div className="sms-credit">
                 <i className="fas fa-credit-card"></i>
                 <span>SMS Balance: <strong>1,245</strong> credits</span>
-                <button className="btn btn-small">Buy More</button>
+                <button className="btn btn-small" onClick={handleBuyMoreCredits}>Buy More</button>
               </div>
             </div>
           </div>

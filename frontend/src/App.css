@@ -735,6 +735,8 @@ body {
     border-radius: 12px;
     padding: 25px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    position: relative;
+    z-index: 1;
 }
 
 .actions-grid {
@@ -742,6 +744,8 @@ body {
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
     margin-top: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .action-btn-large {
@@ -753,23 +757,36 @@ body {
     background-color: #f9fafb;
     border-radius: 10px;
     border: none;
-    cursor: pointer;
+    cursor: pointer !important;
     transition: all 0.3s;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 10;
+    user-select: none;
 }
 
 .action-btn-large:hover {
     background-color: var(--primary-light);
     transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn-large:active {
+    transform: translateY(-1px);
+    background-color: var(--primary);
+    color: white;
 }
 
 .action-btn-large i {
     font-size: 28px;
     margin-bottom: 12px;
+    pointer-events: none !important;
 }
 
 .action-btn-large span {
     font-weight: 600;
     font-size: 14px;
+    pointer-events: none !important;
 }
 
 .action-btn-large i.fa-cog { color: #3b82f6; }
